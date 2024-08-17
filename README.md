@@ -45,6 +45,16 @@ ask-rs "write me a simple python program" -c
 ask-rs -s "why the sky is blue ?"
 ```
 
+# Config
+
+config.toml is located at `~/.config/ask-rs/config.toml`
+```toml
+[ollama]
+host = "http://127.0.0.1"
+port = 11434
+model = "llama3.1:8b"
+```
+
 # License
 borrow examples from [ollama-rs](https://github.com/pepperoni21/ollama-rs)
 
