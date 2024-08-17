@@ -8,7 +8,7 @@ You need to deploy [Ollama](https://github.com/ollama/ollama) first.
 # install ollama
 curl -fsSL https://ollama.com/install.sh | sh
 # start ollama server, 
-# If you install ollama using above command, a ollama server has been running at http://127.0.0.1:11434.
+# If you install ollama using above command, an ollama server has been running at http://127.0.0.1:11434.
 # So do not start another server again.
 ollama serve
 # pull a model from ollama, e.g. llama3.1:8b
