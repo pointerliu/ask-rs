@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 pub struct WebSearcher {
     pub query: String,
     pub response: String,
+    #[allow(dead_code)]
     search_engine: String,
     format: String,
 }
@@ -41,7 +42,6 @@ impl WebSearcher {
     pub async fn search(&mut self) {
         let client = Client::new();
 
-        // let response = client.get(format!("https://s.jina.ai/{}?site={}", self.query, self.search_engine))
         let response = client.get(format!("https://s.jina.ai/{}", self.query))
             .header(header::ACCEPT, "application/json")
             // .header(header::AUTHORIZATION, "Bearer jina_58dea1b1a09b4fd5ade8e1619f21552deELpfFEOzo3jgqFY3Y-Otmnzdhsd")
