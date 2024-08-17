@@ -1,4 +1,4 @@
-use tokio::io::{Stdout, AsyncWriteExt};
+use tokio::io::AsyncWriteExt;
 use ollama_rs::{IntoUrl, Ollama};
 use ollama_rs::generation::completion::GenerationResponseStream;
 use ollama_rs::generation::completion::request::GenerationRequest;
@@ -8,8 +8,8 @@ use crate::prompt::Prompt;
 
 pub trait ChatEngine {
     async fn prompt(&self, input: &Prompt) -> Result<GenerationResponseStream, PromptError>;
-    async fn generate(&self, stdout: Stdout, prompt: Prompt) -> Result<String, Box<dyn std::error::Error>>;
-    fn postprocess<'a>(&self, resp: &'a mut str) -> &'a str;
+    async fn generate(&self, prompt: Prompt) -> Result<String, Box<dyn std::error::Error>>;
+    fn postprocess(&self, resp: String) -> String;
 }
 
 pub struct OllamaEngine {
@@ -40,7 +40,7 @@ impl ChatEngine for OllamaEngine {
         }
     }
 
-    async fn generate(&self, stdout: Stdout, prompt: Prompt) -> Result<String, Box<dyn std::error::Error>> {
+    async fn generate(&self, prompt: Prompt) -> Result<String, Box<dyn std::error::Error>> {
         let mut stream = self.prompt(&prompt.into()).await.unwrap();
         let mut buffer = Vec::new();
         while let Some(Ok(res)) = stream.next().await {
@@ -48,12 +48,27 @@ impl ChatEngine for OllamaEngine {
                 buffer.write_all(ele.response.as_bytes()).await?;
             }
         }
-        let mut buffer = String::from_utf8(buffer)?;
-        let buffer = self.postprocess(&mut buffer);
-        Ok(buffer.to_string())
+        let buffer = String::from_utf8(buffer)?;
+        let buffer = self.postprocess(buffer);
+        Ok(buffer)
     }
 
-    fn postprocess<'a>(&self, resp: &'a mut str) -> &'a str {
-        resp
+    fn postprocess(&self, resp: String) -> String {
+        let mut buffer = Vec::new();
+        let mut in_cblk = false;
+        for line in resp.lines() {
+            if line.starts_with("```") && !in_cblk {
+                in_cblk = true;
+                continue
+            } else if line.starts_with("```") && in_cblk {
+                in_cblk = false;
+                continue
+            }
+            if in_cblk || !self.command_only {
+                buffer.push(line);
+            }
+        }
+        let buffer = buffer.join("\n");
+        buffer
     }
 }
