@@ -1,4 +1,5 @@
 #[derive(Debug)]
+#[allow(unused)]
 pub struct PromptError {
     msg: String,
 }

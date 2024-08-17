@@ -30,7 +30,7 @@ impl ChatEngine for OllamaEngine {
         let request = GenerationRequest::new(self.model.clone(), input.message.clone());
         let res = self.ollama.generate_stream(request).await;
 
-        if let Err(err) = res {
+        if let Err(_err) = res {
             Err(PromptError::new("Ollama server maybe not running."))
         } else {
             Ok(res.unwrap())

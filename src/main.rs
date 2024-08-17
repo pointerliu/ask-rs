@@ -1,7 +1,6 @@
 use std::io::stdin;
 use clap::Parser;
-use tokio::io::{stdout, AsyncWriteExt};
-use tokio_stream::StreamExt;
+use tokio::io::stdout;
 use crate::config::SETTINGS;
 use crate::llm::{ChatEngine, OllamaEngine};
 use crate::prompt::Prompt;
@@ -22,7 +21,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .read()
         .unwrap()
         .clone();
-    println!("{cfg:?}");
+    // println!("{cfg:?}");
 
     let args = Args::parse();
 
@@ -37,8 +36,6 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     } else {
         stdin().into()
     };
-
-    dbg!(prompt.message.clone());
 
     engine.generate(stdout(), prompt).await
 }

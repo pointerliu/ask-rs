@@ -1,10 +1,7 @@
-use std::path::Path;
 use std::sync::RwLock;
-use config::{Config, ConfigBuilder, File, FileFormat};
-use tokio_stream::StreamExt;
+use config::{Config, File};
 use serde::Deserialize;
 use homedir::my_home;
-use ollama_rs::IntoUrlSealed;
 
 #[derive(Debug, Deserialize, Clone)]
 #[allow(unused)]
@@ -25,7 +22,7 @@ lazy_static::lazy_static! {
         let home = my_home().unwrap().unwrap().to_owned();
         let home = home.to_str().unwrap();
         let cfg_path = format!("{}/.config/ask-rs/config.toml", home);
-        println!("{}", cfg_path);
+        // println!("{}", cfg_path);
         Config::builder()
         .add_source(
             File::with_name(cfg_path.as_str())
