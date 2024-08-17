@@ -30,7 +30,7 @@ pub struct AskConfig {
 
 lazy_static::lazy_static! {
     pub static ref SETTINGS: RwLock<AskConfig> = RwLock::new({
-        let cfg = {
+        {
             let home = my_home().unwrap().unwrap().to_owned();
             let home = home.to_str().unwrap();
             let cfg_path = format!("{}/.config/ask-rs/config.toml", home);
@@ -40,11 +40,7 @@ lazy_static::lazy_static! {
                 .required(false)
             ).build().expect(&format!("Error when build config file at {}", cfg_path));
             builder.try_deserialize()
-        };
-        if let Ok(cfg) = cfg {
-            cfg
-        } else {
-            AskConfig::default()
         }
+        .map_or(AskConfig::default(), |cfg| cfg)
     });
 }
