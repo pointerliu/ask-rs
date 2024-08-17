@@ -1,3 +1,4 @@
+use std::error::Error;
 use std::io::stdin;
 use clap::Parser;
 use tokio::io::stdout;
@@ -12,15 +13,18 @@ mod prompt;
 
 #[derive(Parser, Debug)]
 struct Args {
+    #[arg(short, long)]
+    verbose: bool,
     prompt: Option<String>,
 }
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let cfg = SETTINGS.read()?.clone();
-    // println!("{cfg:?}");
-
+async fn main() -> Result<(), Box<dyn Error>> {
     let args = Args::parse();
+    let cfg = SETTINGS.read()?.clone();
+    if args.verbose {
+        println!("{:#?}", cfg);
+    }
 
     let engine = OllamaEngine::new(
         cfg.ollama.host,
