@@ -1,5 +1,6 @@
 use std::io::{IsTerminal, Read, Stdin};
 use std::ops::AddAssign;
+use crate::web::WebSearcher;
 
 #[derive(Debug)]
 pub struct Prompt {
@@ -37,6 +38,14 @@ impl From<String> for Prompt {
     fn from(value: String) -> Self {
         Self {
             message: value
+        }
+    }
+}
+
+impl From<WebSearcher> for Prompt {
+    fn from(ws: WebSearcher) -> Self {
+        Self {
+            message: ws.response
         }
     }
 }
