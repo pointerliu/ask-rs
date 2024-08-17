@@ -4,3 +4,11 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+ollama-rs = { version = "0.2.0", features = ["stream"] }
+tokio = { version = "1.0.0", features = ["rt", "rt-multi-thread", "macros"] }
+tokio-stream = "0.1.15"
+lazy_static = "1.5.0"
+config = "0.14.0"
+serde = { version = "1.0.208", features = ["derive"] }
+homedir = "0.3.3"
+clap = { version = "4.5.16", features = ["derive"] }
