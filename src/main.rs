@@ -17,10 +17,7 @@ struct Args {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let cfg = SETTINGS
-        .read()
-        .unwrap()
-        .clone();
+    let cfg = SETTINGS.read()?.clone();
     // println!("{cfg:?}");
 
     let args = Args::parse();
