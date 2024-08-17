@@ -1,6 +1,6 @@
 use std::error::Error;
 use std::io::stdin;
-use clap::Parser;
+use clap::{arg, Parser};
 use tokio::io::stdout;
 use crate::config::SETTINGS;
 use crate::llm::{ChatEngine, OllamaEngine};
@@ -15,6 +15,8 @@ mod prompt;
 struct Args {
     #[arg(short, long)]
     verbose: bool,
+    #[arg(short, long)]
+    command_only: bool,
     prompt: Option<String>,
 }
 
@@ -30,13 +32,16 @@ async fn main() -> Result<(), Box<dyn Error>> {
         cfg.ollama.host,
         cfg.ollama.port,
         &cfg.ollama.model,
+        args.command_only
     );
+    let mut prompt = Prompt::new()
+        .add_source(stdin())
+        .add_source(args.prompt.map_or("".to_owned(), |x| x));
 
-    let prompt: Prompt = if let Some(prompt) = args.prompt {
-        prompt.into()
-    } else {
-        stdin().into()
-    };
-
-    engine.generate(stdout(), prompt).await
+    if args.verbose {
+        println!("Prompt = {}", prompt.message);
+    }
+    let resp = engine.generate(stdout(), prompt).await?;
+    println!("{}", resp);
+    Ok(())
 }
